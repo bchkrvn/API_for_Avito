@@ -12,5 +12,4 @@ users_router.register("users", UserViewSet, basename="users")
 urlpatterns = [
     path("", include(users_router.urls)),
     path('token/', TokenObtainPairView.as_view()),
-    path('token/refresh/', TokenRefreshView.as_view()),
 ]

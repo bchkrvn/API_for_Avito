@@ -10,7 +10,7 @@ class Ad(models.Model):
     description = models.TextField(max_length=2000)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
-    image = models.ImageField(upload_to='images/ads/')
+    image = models.ImageField(upload_to='images/ads/', null=True, blank=True)
     is_active = models.BooleanField(default=True)
 
     class Meta:
@@ -25,4 +25,4 @@ class Comment(models.Model):
     is_active = models.BooleanField(default=True)
 
     class Meta:
-        ordering = ['-created_at']
+        ordering = ['created_at']

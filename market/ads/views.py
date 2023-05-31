@@ -1,19 +1,32 @@
-from rest_framework import pagination, viewsets
+from django.db.models import Q
+from django_filters import rest_framework as filters
+from rest_framework import viewsets
 from rest_framework.generics import ListAPIView
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 
+from .filter import AdFilter
 from .models import Ad, Comment
+from .permissions import IsOwner
 from .serializers import AdDetailSerializer, AdSerializer, CommentSerializer
 
 
-# TODO view функции. Предлагаем Вам следующую структуру - но Вы всегда можете использовать свою
 class AdViewSet(viewsets.ModelViewSet):
     queryset = Ad.objects.filter(is_active=True).all()
     serializers = {
         "retrieve": AdDetailSerializer,
     }
     default_serializer = AdSerializer
+    filterset_class = AdFilter
+
+    def get_permissions(self):
+        if self.action in ['list']:
+            return [AllowAny()]
+        if self.action in ['retrieve', 'create']:
+            return [IsAuthenticated()]
+        elif self.action in ['update', 'partial_update', 'destroy']:
+            return [IsOwner()]
+        return super().get_permissions()
 
     def get_serializer_class(self):
         return self.serializers.get(self.action, self.default_serializer)
@@ -21,6 +34,10 @@ class AdViewSet(viewsets.ModelViewSet):
     def retrieve(self, request, *args, **kwargs):
         self.queryset = self.queryset.select_related('author')
         return super().retrieve(request, *args, **kwargs)
+
+    def create(self, request, *args, **kwargs):
+        request.data['author'] = request.user.id
+        return super().create(request, *args, **kwargs)
 
     def destroy(self, request, *args, **kwargs):
         item = self.get_object()
@@ -43,6 +60,13 @@ class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.filter(is_active=True).all()
     serializer_class = CommentSerializer
 
+    def get_permissions(self):
+        if self.action in ['retrieve', 'create', 'list']:
+            return [IsAuthenticated()]
+        elif self.action in ['update', 'partial_update', 'destroy']:
+            return [IsOwner()]
+        return super().get_permissions()
+
     def list(self, request, *args, **kwargs):
         ad_id = kwargs['ad_pk']
         self.queryset = self.queryset.filter(ad_id=ad_id)
@@ -51,8 +75,9 @@ class CommentViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         ad_id = kwargs['ad_pk']
         user_id = request.user.id
-        request.data['ad_id'] = ad_id
-        request.data['author_id'] = user_id
+        request.data['ad'] = ad_id
+        request.data['author'] = user_id
+        print(request.data)
         return super().create(request, *args, **kwargs)
 
     def retrieve(self, request, *args, **kwargs):

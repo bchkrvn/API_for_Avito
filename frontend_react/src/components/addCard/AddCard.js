@@ -26,7 +26,7 @@ function AddCard({ id, handleAddAd, isLoading }) {
     setTitle(value);
 
     if (value.length < 8) {
-      errors.title = "Минимальное колличество символоа - 8";
+      errors.title = "Минимальное количество символов - 8";
     } else {
       errors.title = "" && setValidationErrors(errors);
     }
@@ -38,7 +38,7 @@ function AddCard({ id, handleAddAd, isLoading }) {
     setPrice(value);
 
     if (!value.length) {
-      errors.price = "Это поле не дожно быть пустым";
+      errors.price = "Это поле не должно быть пустым";
     } else {
       errors.price = "" && setValidationErrors(errors);
     }
@@ -50,7 +50,7 @@ function AddCard({ id, handleAddAd, isLoading }) {
     setDescription(value);
 
     if (value.length < 8) {
-      errors.description = "Минимальное колличество символоа - 8";
+      errors.description = "Минимальное количество символов - 8";
     } else {
       errors.description = "" && setValidationErrors(errors);
     }

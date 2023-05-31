@@ -9,7 +9,7 @@ function Cards({ ads }) {
   return (
     <section className={`cards ${location === "/profile" ? "padding" : ""}`}>
       {!ads.length ? (
-        <p>У Вас еще нет обьявлений.</p>
+        <p>У Вас еще нет объявлений.</p>
       ) : (
         <ul
           className={`cards__container ${

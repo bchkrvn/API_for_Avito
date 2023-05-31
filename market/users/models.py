@@ -52,6 +52,7 @@ class User(AbstractBaseUser):
     image = models.ImageField(upload_to='images/users_avatars/')
     is_active = models.BooleanField(default=True)
     registration_date = models.DateTimeField(auto_now_add=True, null=True)
+    is_staff = models.BooleanField(default=False)
 
     objects = UserManager()
 
@@ -65,3 +66,13 @@ class User(AbstractBaseUser):
     @property
     def is_user(self):
         return self.role == Roles.USER
+
+    @property
+    def is_superuser(self):
+        return self.is_admin
+
+    def has_perm(self, perm, obj=None):
+        return self.is_admin
+
+    def has_module_perms(self, app_label):
+        return self.is_admin

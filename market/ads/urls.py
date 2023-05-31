@@ -9,11 +9,11 @@ ad_router = routers.SimpleRouter()
 ad_router.register('ads', viewset=AdViewSet)
 
 comment_router = routers.SimpleRouter()
-comment_router.register('ads/<int:ad_pk>/comments', viewset=CommentViewSet)
+comment_router.register('comments', viewset=CommentViewSet)
 
 urlpatterns = [
-    path('ads/me/', UserAdsListViewSet.as_view(), name='user_ads')
+    path('ads/me/', UserAdsListViewSet.as_view(), name='user_ads'),
+    path('ads/<int:ad_pk>/', include(comment_router.urls))
 ]
 
 urlpatterns += ad_router.urls
-urlpatterns += comment_router.urls
