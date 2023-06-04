@@ -5,7 +5,6 @@ from django.conf.urls.static import static
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from rest_framework_simplejwt.views import TokenRefreshView
 
-# TODO здесь необходимо подключить нужные нам urls к проекту
 
 urlpatterns = [
     path("api/admin/", admin.site.urls),

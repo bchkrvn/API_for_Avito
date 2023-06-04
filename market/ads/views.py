@@ -1,20 +1,21 @@
-from django.db.models import Q
-from django_filters import rest_framework as filters
 from rest_framework import viewsets
 from rest_framework.generics import ListAPIView
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 
 from .filter import AdFilter
 from .models import Ad, Comment
 from .permissions import IsOwner
-from .serializers import AdDetailSerializer, AdSerializer, CommentSerializer
+from .serializers import AdDetailSerializer, AdSerializer, CommentSerializer, AdUpdateSerializer
 
 
 class AdViewSet(viewsets.ModelViewSet):
     queryset = Ad.objects.filter(is_active=True).all()
     serializers = {
         "retrieve": AdDetailSerializer,
+        'update': AdUpdateSerializer,
+        'partial_update': AdUpdateSerializer,
     }
     default_serializer = AdSerializer
     filterset_class = AdFilter
@@ -43,7 +44,12 @@ class AdViewSet(viewsets.ModelViewSet):
         item = self.get_object()
         item.is_active = False
         item.save()
-        return Response({'status': 'ok'}, status=204)
+        comments = Comment.objects.filter(ad=item).all()
+        for comment in comments:
+            comment.is_active = False
+            comment.save()
+
+        return Response({}, status=204)
 
 
 class UserAdsListViewSet(ListAPIView):
@@ -56,9 +62,16 @@ class UserAdsListViewSet(ListAPIView):
         return super().list(request, *args, **kwargs)
 
 
+class CommentListPagination(PageNumberPagination):
+    page_size = 100
+    page_size_query_param = 'page_size'
+    max_page_size = 1000
+
+
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.filter(is_active=True).all()
     serializer_class = CommentSerializer
+    pagination_class = CommentListPagination
 
     def get_permissions(self):
         if self.action in ['retrieve', 'create', 'list']:

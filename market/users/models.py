@@ -46,7 +46,7 @@ class Roles(models.TextChoices):
 class User(AbstractBaseUser):
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
-    phone = PhoneNumberField(region='RU', max_length=15)
+    phone = PhoneNumberField(region='RU', max_length=30)
     email = models.EmailField(unique=True)
     role = models.CharField(max_length=5, choices=Roles.choices, default=Roles.USER)
     image = models.ImageField(upload_to='images/users_avatars/')
@@ -76,3 +76,6 @@ class User(AbstractBaseUser):
 
     def has_module_perms(self, app_label):
         return self.is_admin
+
+    class Meta:
+        ordering = ['id']
