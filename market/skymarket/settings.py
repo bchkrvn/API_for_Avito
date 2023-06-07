@@ -104,7 +104,6 @@ DJOSER = {
     "TOKEN_MODEL": None,
     "PASSWORD_RESET_CONFIRM_URL": 'api/users/reset_password_confirm/{uid}/{token}',
     "PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND": True,
-
 }
 
 # Database
@@ -112,7 +111,7 @@ DJOSER = {
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': os.getenv('DB_ENGINE'),
         'NAME': os.getenv('DB_NAME'),
         'USER': os.getenv('DB_USER'),
         'PASSWORD': os.getenv('DB_PASSWORD'),

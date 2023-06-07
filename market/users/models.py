@@ -1,13 +1,10 @@
-from django.contrib.auth.models import AbstractBaseUser, AbstractUser
+from django.contrib.auth.models import AbstractBaseUser
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
-from django.utils.translation import gettext_lazy as _
 
-# Менеджер должен быть унаследован от следующего класса
 from django.contrib.auth.models import BaseUserManager
 
 
-# Менеджер должен содержать как минимум две следующие функции
 class UserManager(BaseUserManager):
 
     def create_user(self, email, first_name, last_name, phone, password=None):
@@ -31,7 +28,7 @@ class UserManager(BaseUserManager):
             first_name=first_name,
             last_name=last_name,
             phone=phone,
-            role="admin"
+            role=Roles.ADMIN,
         )
         user.set_password(password)
         user.save(using=self._db)
