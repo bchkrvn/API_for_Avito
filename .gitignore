@@ -129,5 +129,6 @@ dmypy.json
 .pyre/
 .DS_Store
 .idea/
-./django_static
-/market/.pytest_cache
+./market/django_static
+./market/django_media
+./market/.pytest_cache
