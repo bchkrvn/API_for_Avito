@@ -5,7 +5,7 @@ from .models import Ad, Comment
 
 class CommentSerializer(serializers.ModelSerializer):
     author_first_name = serializers.CharField(source='author.first_name', read_only=True)
-    author_last_name = serializers.CharField(source='author.first_name', read_only=True)
+    author_last_name = serializers.CharField(source='author.last_name', read_only=True)
     author_image = serializers.SerializerMethodField(read_only=True)
 
     def get_author_image(self, obj: Comment):
@@ -40,7 +40,7 @@ class AdUpdateSerializer(serializers.ModelSerializer):
 
 class AdDetailSerializer(serializers.ModelSerializer):
     author_first_name = serializers.CharField(source='author.first_name')
-    author_last_name = serializers.CharField(source='author.first_name')
+    author_last_name = serializers.CharField(source='author.last_name')
     phone = serializers.CharField(source='author.phone')
 
     class Meta:

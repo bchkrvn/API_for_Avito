@@ -1,3 +1,4 @@
+from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import viewsets
 from rest_framework.generics import ListAPIView
 from rest_framework.pagination import PageNumberPagination
@@ -10,6 +11,14 @@ from .permissions import IsOwner
 from .serializers import AdDetailSerializer, AdSerializer, CommentSerializer, AdUpdateSerializer
 
 
+@extend_schema_view(
+    list=extend_schema(description="Retrieve all ads", summary="List ads"),
+    retrieve=extend_schema(description="Retrieve ad by id", summary="Retrieve ad"),
+    create=extend_schema(description="Create new ad", summary="Create ad"),
+    update=extend_schema(description="Full ad update", summary="Update ad"),
+    partial_update=extend_schema(description="Partial add update", summary="Partial update ad"),
+    destroy=extend_schema(description="Delete ad and ad's comments", summary="Delete comments"),
+)
 class AdViewSet(viewsets.ModelViewSet):
     queryset = Ad.objects.filter(is_active=True).all()
     serializers = {
@@ -52,7 +61,10 @@ class AdViewSet(viewsets.ModelViewSet):
         return Response({}, status=204)
 
 
-class UserAdsListViewSet(ListAPIView):
+@extend_schema_view(
+    list=extend_schema(description="Retrieve user's ads list", summary="User's ads")
+)
+class UserAdsListAPIView(ListAPIView):
     queryset = Ad.objects.filter(is_active=True).all()
     serializer_class = AdSerializer
     permission_classes = [IsAuthenticated]
@@ -72,6 +84,7 @@ class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.filter(is_active=True).all()
     serializer_class = CommentSerializer
     pagination_class = CommentListPagination
+    http_method_names = ['get', 'post', 'patch', 'delete']
 
     def get_permissions(self):
         if self.action in ['retrieve', 'create', 'list']:
@@ -80,33 +93,50 @@ class CommentViewSet(viewsets.ModelViewSet):
             return [IsOwner()]
         return super().get_permissions()
 
+    @extend_schema(
+        description='Retrieve all comments for one ad',
+        summary='Comments list for ad'
+    )
     def list(self, request, *args, **kwargs):
         ad_id = kwargs['ad_pk']
         self.queryset = self.queryset.filter(ad_id=ad_id)
         return super().list(request, *args, **kwargs)
 
+    @extend_schema(
+        description='Create comment for one ad',
+        summary='Create comment'
+    )
     def create(self, request, *args, **kwargs):
-        ad_id = kwargs['ad_pk']
-        user_id = request.user.id
-        request.data['ad'] = ad_id
-        request.data['author'] = user_id
-        print(request.data)
+        request.data['ad'] = kwargs['ad_pk']
+        request.data['author'] = request.user.id
         return super().create(request, *args, **kwargs)
 
+    @extend_schema(
+        description='Retrieve comment',
+        summary='Retrieve comment'
+    )
     def retrieve(self, request, *args, **kwargs):
         ad_id = kwargs['ad_pk']
         self.queryset = self.queryset.filter(ad_id=ad_id)
         return super().retrieve(request, *args, **kwargs)
 
+    @extend_schema(
+        description='Update comment text',
+        summary='Update comment'
+    )
     def partial_update(self, request, *args, **kwargs):
         ad_id = kwargs['ad_pk']
         self.queryset = self.queryset.filter(ad_id=ad_id)
         return super().partial_update(request, *args, **kwargs)
 
+    @extend_schema(
+        description='Delete comment',
+        summary='Delete comment'
+    )
     def destroy(self, request, *args, **kwargs):
         ad_id = kwargs['ad_pk']
         self.queryset = self.queryset.filter(ad_id=ad_id)
         comment = self.get_object()
         comment.is_active = False
         comment.save()
-        return Response({'status': 'ok'}, status=204)
+        return Response({}, status=204)

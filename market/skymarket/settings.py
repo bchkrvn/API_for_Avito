@@ -27,13 +27,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-vpvsd0%a*6n1s4@w+wmt*$loc_p4zw^pw6z@e8e21iwii%m3&5"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = int(os.getenv('DEBUG', default=0))
 
 ALLOWED_HOSTS = ["*"]
 
 # Application definition
 
-# TODO здесь тоже нужно подключить Swagger и corsheaders
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -101,7 +100,11 @@ DJOSER = {
         'user': 'users.serializers.CurrentUserSerializer',
         'current_user': 'users.serializers.CurrentUserSerializer',
     },
-    'LOGIN_FIELD': 'email'
+    'LOGIN_FIELD': 'email',
+    "TOKEN_MODEL": None,
+    "PASSWORD_RESET_CONFIRM_URL": 'api/users/reset_password_confirm/{uid}/{token}',
+    "PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND": True,
+
 }
 
 # Database
@@ -166,11 +169,14 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Include Email Backend
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_USE_TLS = True
-EMAIL_HOST = os.environ.get("EMAIL_HOST", "smtp.gmail.com")
+EMAIL_USE_TLS = False
+EMAIL_USE_SSL = True
+EMAIL_HOST = os.environ.get("EMAIL_HOST")
 EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
 EMAIL_PORT = os.environ.get("EMAIL_PORT")
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+SITE_NAME = "Market"
 
 SPECTACULAR_SETTINGS = {
     "TITLE": "Market",

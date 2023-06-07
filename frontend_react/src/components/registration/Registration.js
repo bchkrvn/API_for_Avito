@@ -96,7 +96,7 @@ function Registration() {
             name="password"
             type="password"
             minLength="8"
-            placeholder="пароль должен состоять из букв и цифр"
+            placeholder="Пароль должен состоять из букв и цифр"
             className="form__password form__input"
             onChange={handleChangeInput}
           />

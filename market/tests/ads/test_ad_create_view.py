@@ -31,7 +31,7 @@ class TestAdCreateView:
         assert ad.price == data['price'], 'Цена объявления не совпадает с переданной'
         assert ad.description == data['description'], 'Описание объявления не совпадает с переданным'
         assert ad.author == user, 'Автор объявления не совпадает с переданным'
-        assert ad.is_active is True, 'Объявление не активно'
+        assert ad.is_active, 'Объявление не активно'
 
     @pytest.mark.django_db
     def test_create_ad_errors(self, client, user_and_access_token):

@@ -76,7 +76,7 @@ function Main(props) {
       {isLoading ? (
         <Preloader />
       ) : allAds.length === 0 ? (
-        <p className="error-paragraph">По Вашему запросу ничего не найденно</p>
+        <p className="error-paragraph">По Вашему запросу ничего не найдено</p>
       ) : (
         <Cards ads={user ? ads : adsDefault} />
       )}
