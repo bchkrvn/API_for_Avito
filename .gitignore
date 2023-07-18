@@ -104,6 +104,7 @@ celerybeat.pid
 # Environments
 .env
 .venv
+market_postgres/.docker_env
 env/
 venv/
 ENV/

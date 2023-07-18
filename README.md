@@ -14,6 +14,8 @@
 - PyTest
 
 ## Возможности:
+Видео на Youtube:  
+[![Watch the video](https://img.youtube.com/vi/lqaQyRieQt8/maxresdefault.jpg)](https://youtu.be/lqaQyRieQt8)
 - Регистрация, авторизация и аутентификация пользователя
 - Сброс пароля через почту
 - Создание и редактирование объявлений
